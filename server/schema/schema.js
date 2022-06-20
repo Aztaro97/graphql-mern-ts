@@ -76,9 +76,9 @@ const myMutations = new GraphQLObjectType({
     addClient: {
       type: ClientType,
       args: {
-        name: { type: GraphQLString },
-        email: { type: GraphQLString },
-        phone: { type: GraphQLString },
+        name: { type: GraphQLNonNull(GraphQLString) },
+        email: { type: GraphQLNonNull(GraphQLString) },
+        phone: { type: GraphQLNonNull(GraphQLString) },
       },
       resolve(parent, args) {
         const client = new clientModel({
@@ -88,6 +88,19 @@ const myMutations = new GraphQLObjectType({
         });
 
         return client.save();
+      },
+    },
+    // Delete a client
+    deleteClient: {
+      type: ClientType,
+      args: { id: { type: GraphQLNonNull(GraphQLID) } },
+      resolve(parent, args) {
+        projectModel.find({ clientId: args.id }).then((projects) => {
+          projects.forEach((project) => {
+            project.remove();
+          });
+        });
+        return clientModel.findByIdAndDelete(args.id);
       },
     },
 
@@ -120,10 +133,51 @@ const myMutations = new GraphQLObjectType({
         return newProject.save();
       },
     },
+    // Delete a project
+    deleteProject: {
+      type: ProjectType,
+      args: { id: { type: GraphQLNonNull(GraphQLID) } },
+      resolve(parent, args) {
+        return projectModel.findByIdAndDelete(args.id);
+      },
+    },
+    // Update a project
+    updateProject: {
+      type: ProjectType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+        description: { type: GraphQLString },
+        status: {
+          type: new GraphQLEnumType({
+            name: "ProjectStatusUpdated",
+            values: {
+              new: { value: "Not Started" },
+              progress: { value: "In Progress" },
+              completed: { value: "Completed" },
+            },
+          }),
+        },
+        clientId: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        return projectModel.findByIdAndUpdate(
+          args.id,
+          {
+            $set: {
+              name: args.name,
+              description: args.description,
+              status: args.status,
+            },
+          },
+          { new: true }
+        );
+      },
+    },
   },
 });
 
-exports.exports = new GraphQLSchema({
+module.exports = new GraphQLSchema({
   query: RootQuery,
   mutation: myMutations,
 });
