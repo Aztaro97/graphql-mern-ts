@@ -1,13 +1,21 @@
-import { useState } from "react";
-import logo from "./logo.svg";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+import Footer from "./components/footer";
+import NavBar from "./components/navbar";
+import HomePage from "./pages/home";
+import GlobalStyles from "./styles/GlobalStyles";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <div className="App">
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <GlobalStyles />
+      <NavBar />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
+      <Footer />
     </div>
   );
 }
