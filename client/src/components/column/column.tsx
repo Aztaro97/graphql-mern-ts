@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
-import Project from "../project";
+import Singleproject from "../Singleproject";
 
 interface props {
   className?: string;
@@ -15,7 +15,10 @@ const Column: React.FC<props> = ({ className, title }) => {
         <h1>{title}</h1>
       </TitleWrapper>
       <ContentWrapper>
-        <Project />
+        <Singleproject />
+        <Singleproject />
+        <Singleproject />
+        <Singleproject />
       </ContentWrapper>
     </Container>
   );
@@ -41,12 +44,7 @@ const Container = styled.div`
   width: 100%;
 `;
 const ContentWrapper = styled.div`
-  ${tw`
-  	mt-4
-	p-2
- 	border
-  	border-gray-200
-  `}
+  ${tw`flex flex-col gap-3 mt-4 p-2 border border-gray-200`}
 `;
 
 export default Column;
